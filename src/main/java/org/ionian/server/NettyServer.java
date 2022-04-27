@@ -1,6 +1,7 @@
 package org.ionian.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -11,35 +12,45 @@ import java.util.Scanner;
 
 
 public class NettyServer {
+    //单例模式
+//    public static final NettyServer INSTANCE =new NettyServer();
+
     public static void main(String[] args)
     {
-        System.out.println("请输入你要监听的端口：(4000-4500)");
+        System.out.println("请输入你要监听的端口：(4000-4500),真实生产环境应当写死该端口，如使用4396端口");
         Scanner sc=new Scanner(System.in);
         int port=sc.nextInt();
-        INSTANCE.startListening(port);
+        NettyServer nettyServer = new NettyServer();
+        //开始监听端口并且处理连接
+        nettyServer.startListening(port);
     }
 
-    //定义后续每条连接的数据读写
-    public static void setServerBootstrapChildHandler(ServerBootstrap serverBootstrap){
-        //定义后续每条连接的数据读写，业务处理逻辑，这里的NioSocketChannel是netty对NIO类型连接的抽象，如Socket
-        serverBootstrap.childHandler(new ChannelInitializer<NioSocketChannel>() {
-            @Override
-            //每条客户端连接--
-            protected void initChannel(NioSocketChannel nioSocketChannel) {
-                System.out.println("客户机接入");
-                //添加逻辑处理器
-                nioSocketChannel.pipeline()
-                        .addLast(new SimpleServerHandler())
-                        ;
-            }
-        });
-    }
+    /**
+     * 这个比较重要,这个使用了责任链模式,pipeline 可以理解成一个List,存放逻辑处理器[Handler],然后服务端的收发处理都在[Handler]里了
+     * 简单的样例:{@link SimpleServerHandler}
+     */
+    ChannelHandler childHandler=new ChannelInitializer<NioSocketChannel>() {
+        @Override
+        //服务端客户端接入处理器 每个客户端接入都会执行这一句来初始化信道
+        protected void initChannel(NioSocketChannel nioSocketChannel) {
+            System.out.println("客户机接入");
+            //添加逻辑处理器
+            nioSocketChannel.pipeline()
+                    .addLast(new SimpleServerHandler())
+            ;
+        }
+    };
 
-    //单例模式
-    public static final NettyServer INSTANCE =new NettyServer();
+    ChannelHandler handler = new ChannelInitializer<NioServerSocketChannel>() {
+        @Override
+        //服务端--初始化处理器
+        protected void initChannel(NioServerSocketChannel nioServerSocketChannel)  {
+            System.out.println("服务器启动中");
+        }
+    };
 
 
-    public void startListening(int port){
+    private void startListening(int port){
         //监听欢迎端口-线程组
         NioEventLoopGroup bossGroup =new NioEventLoopGroup();
         //处理每条链接数据读写的线程组
@@ -54,28 +65,23 @@ public class NettyServer {
                 .channel(NioServerSocketChannel.class);
 
         //设置客户机连接处理器链
-        setServerBootstrapChildHandler(serverBootstrap);
+        //定义后续每条连接的数据读写，业务处理逻辑，这里的NioSocketChannel是netty对NIO类型连接的抽象，如Socket
+        serverBootstrap.childHandler(childHandler);
         //设置服务器监听处理器
-        setServerBootstrapHandler(serverBootstrap);
+        serverBootstrap.handler(handler);
         //设置额外设置
         setServerBootstrapExtraConfig(serverBootstrap);
-        //绑定端口，监听开始
+        //绑定端口，监听开始 递归使用
         bind(serverBootstrap,port,0);
     }
 
-    //handler方法，指定服务器启动过程中的一些逻辑
-    public static void setServerBootstrapHandler(ServerBootstrap serverBootstrap){
-        //handler方法，指定服务器启动过程中的一些逻辑，一般用不到，NioServerSocketChannel是Nio的服务器连接的抽象，如serverSocket
-        serverBootstrap.handler(new ChannelInitializer<NioServerSocketChannel>() {
-            @Override
-            //服务端--
-            protected void initChannel(NioServerSocketChannel nioServerSocketChannel)  {
-                System.out.println("服务器启动中");
-            }
-        });
-    }
-    //其他配置部分
-    public static void setServerBootstrapExtraConfig(ServerBootstrap serverBootstrap){
+    /**
+     * 其他配置部分
+     * 这里可以不关心
+     * todo 后续支持UDP的连接方式,目前是使用tcp连接
+     * @param serverBootstrap
+     */
+    private static void setServerBootstrapExtraConfig(ServerBootstrap serverBootstrap){
         //其他配置部分
         serverBootstrap
                 //给Server连接维护一个map
@@ -90,7 +96,7 @@ public class NettyServer {
                 .childOption(ChannelOption.TCP_NODELAY, true)
         ;
     }
-    public static void bind(ServerBootstrap serverBootstrap,int port,int time)
+    private static void bind(ServerBootstrap serverBootstrap,int port,int time)
     {
         final int next=time+1;
         if(time>5){

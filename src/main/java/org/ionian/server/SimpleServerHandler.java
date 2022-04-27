@@ -16,6 +16,12 @@ import java.util.Scanner;
  */
 public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
 
+    /**
+     * 简单的处理字符串变成字节流
+     * @param str
+     * @param ctx
+     * @return
+     */
     private ByteBuf getByteBuf(String str, ChannelHandlerContext ctx) {
         if(Objects.isNull(str) || "".equals(str)){
             return null;
@@ -30,13 +36,15 @@ public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
         System.out.println("进入handler被激活的状态");
         Scanner scanner=new Scanner(System.in);
         new Thread(()->{
-            System.out.println("可以输入一句话到客户端中：");
-            String str=scanner.next();
-            System.out.println(new Date() + ": 服务端写出数据:"+str);
-            // 1.获取数据
-            ByteBuf buffer = getByteBuf(str,ctx);
-            // 2.写数据
-            ctx.channel().writeAndFlush(buffer);
+            while (true){
+                System.out.println("可以输入一句话到客户端中：");
+                String str=scanner.next();
+                System.out.println(new Date() + ": 服务端写出数据:"+str);
+                // 1.转换成字节流数据
+                ByteBuf buffer = getByteBuf(str,ctx);
+                // 2.写数据
+                ctx.channel().writeAndFlush(buffer);
+            }
         }).start();
     }
 
