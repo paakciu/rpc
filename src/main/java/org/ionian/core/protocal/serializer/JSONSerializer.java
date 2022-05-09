@@ -10,6 +10,8 @@ import org.ionian.common.enums.SerializerAlgorithm;
  * @date 2020/12/21 10:05
  */
 public class JSONSerializer implements Serializer {
+
+    public static final JSONSerializer INSTANCE=new JSONSerializer();
     /**
      * 序列化算法，获取具体的序列化算法标识
      *

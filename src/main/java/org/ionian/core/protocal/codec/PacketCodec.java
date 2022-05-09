@@ -2,7 +2,11 @@ package org.ionian.core.protocal.codec;
 
 import io.netty.buffer.ByteBuf;
 import org.ionian.common.IMConfig;
+import org.ionian.common.enums.PacketsCommandEnum;
+import org.ionian.common.enums.SerializerAlgorithm;
+import org.ionian.common.exception.BaseException;
 import org.ionian.core.protocal.packet.BasePacket;
+import org.ionian.core.protocal.serializer.Serializer;
 
 /**
  * PacketCodeC
@@ -16,14 +20,14 @@ public class PacketCodec {
      * 魔数
      */
     public static final byte[] MAGIC_NUMBER= IMConfig.MAGIC;
-    public static final int MAGICINT=IMConfig.MAGICINT;
+    public static final int MAGIC_INT=IMConfig.MAGICINT;
     /**
      * 这些是跟包编码/解码相关的参数，一定是绑定这个 类的
      * {@link PacketCodec}
      */
-    public static final int LENGTHFIELDOFFSET=7;
-    public static final int LENGTHFIELDLENGTH=4;
-    public static final int MAXFRAMELENGTH=Integer.MAX_VALUE;
+    public static final int LENGTH_FIELD_OFFSET=7;
+    public static final int LENGTH_FIELD_LENGTH=4;
+    public static final int MAX_FRAME_LENGTH=Integer.MAX_VALUE;
 
     /**
      * 编码
@@ -58,6 +62,9 @@ public class PacketCodec {
     public static BasePacket decode(ByteBuf byteBuf) {
         // 读取magic number
         int Magic=byteBuf.readInt();
+        if(MAGIC_INT!=Magic){
+            return null;
+        }
         // 版本号
         byte version = byteBuf.readByte();//skipBytes
         // 序列化算法标识
@@ -68,20 +75,23 @@ public class PacketCodec {
         int length = byteBuf.readInt();
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes);
-//        /**
-//         * 使用{@link PacketsCommandMapping}获取类型
-//         */
-//        Class<? extends BasePacket> requestType = PacketsCommandMapping.getRequestType(command);
-//        /**
-//         * 使用{@link SerializerAlgorithm}获取序列化方法
-//         */
-//        Serializer serializer = SerializerAlgorithm.getSerializer(serializeAlgorithm);
-//
-//        if (requestType != null && serializer != null) {
-//            return serializer.deserialize(requestType, bytes);
-//        }
+        return toPacket(version,serializeAlgorithm,command, bytes);
+    }
+
+    private static BasePacket toPacket(byte version,byte serializeAlgorithm,byte command,byte[] bytes){
+        /**
+         * 使用{@link PacketsCommandMapping}获取类型
+         */
+        Class<? extends BasePacket> requestType = PacketsCommandEnum.getRequestType(command);
+        /**
+         * 使用{@link SerializerAlgorithm}获取序列化方法
+         */
+        Serializer serializer = SerializerAlgorithm.getSerializer(serializeAlgorithm);
+
+        if (requestType != null && serializer != null) {
+            return serializer.deserialize(requestType, bytes);
+        }
         //如果出了问题
         return null;
     }
-
 }

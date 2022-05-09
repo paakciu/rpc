@@ -11,7 +11,7 @@ import org.ionian.core.protocal.serializer.Serializer;
  * @since 2022/05/05 10:04
  */
 public enum SerializerAlgorithm {
-    JSON(1,"fastJSON",new JSONSerializer()),
+    JSON(1,"fastJSON",JSONSerializer.INSTANCE),
 
     ;
     /**
