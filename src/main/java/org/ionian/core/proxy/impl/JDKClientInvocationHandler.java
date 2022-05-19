@@ -1,6 +1,7 @@
 package org.ionian.core.proxy.impl;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.ionian.core.cache.CommonClientCache;
 import org.ionian.core.protocal.packet.RpcPacket;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeoutException;
  * @Author linhao
  * @Date created in 6:59 下午 2021/12/5
  */
+@Slf4j
 public class JDKClientInvocationHandler implements InvocationHandler {
 
     private final static Object OBJECT = new Object();
@@ -31,7 +33,7 @@ public class JDKClientInvocationHandler implements InvocationHandler {
         RpcPacket rpcPacket = new RpcPacket();
         rpcPacket.setArgs(args);
         rpcPacket.setTargetMethod(method.getName());
-        rpcPacket.setTargetServiceName(clazz.getName());
+        rpcPacket.setTargetServiceName(clazz.getSimpleName());
         rpcPacket.setUuid(UUID.randomUUID().toString());
         CommonClientCache.RESPONSE_MAP.put(rpcPacket.getUuid(), OBJECT);
         CommonClientCache.SEND_QUEUE.add(rpcPacket);

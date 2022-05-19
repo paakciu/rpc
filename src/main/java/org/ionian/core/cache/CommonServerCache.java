@@ -1,5 +1,7 @@
 package org.ionian.core.cache;
 
+import org.ionian.server.facade.HelloServiceImpl;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,5 +11,8 @@ import java.util.Map;
  */
 public class CommonServerCache {
 
-    public static final Map<String,Object> PROVIDER_CLASS_MAP = new HashMap<>();
+    public static final Map<String,Object> PROVIDER_MAP = new HashMap<>();
+    static {
+        PROVIDER_MAP.put("HelloService", new HelloServiceImpl());
+    }
 }
