@@ -54,13 +54,8 @@ public class NettyClient {
         NioEventLoopGroup workerGroup =new NioEventLoopGroup();
         //引导类
         Bootstrap bootstrap =new Bootstrap();
-        //核心配置
-        bootstrap
-                //指定线程模型
-                .group(workerGroup)
-                //指定IO类型为NIO
-                .channel(NioSocketChannel.class)
-        ;
+        //核心配置,指定线程模型,指定IO类型为NIO
+        bootstrap.group(workerGroup).channel(NioSocketChannel.class);
         //指定IO的处理逻辑
         bootstrap.handler(handler);
         setBootstrapExtraConfig(bootstrap);
@@ -118,15 +113,12 @@ public class NettyClient {
      * @return
      */
     private Bootstrap setBootstrapExtraConfig(Bootstrap bootstrap){
-        //额外的配置
-        bootstrap
-                // 设置TCP底层属性
-                //连接的超时时间
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-                //是否开启TCP底层心跳机制
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                //是否开启Nagle，即高实时性（true）减少发送次数（false）
-                .option(ChannelOption.TCP_NODELAY, true);
+        //连接的超时时间
+        bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
+        //是否开启TCP底层心跳机制
+        bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+        //是否开启Nagle，即高实时性（true）减少发送次数（false）
+        bootstrap.option(ChannelOption.TCP_NODELAY, true);
         return bootstrap;
     }
 }
