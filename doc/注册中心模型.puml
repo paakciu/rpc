@@ -1,0 +1,13 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+
+Provider -> 注册中心Registry: 注册
+Consumer -> 注册中心Registry: 订阅
+
+注册中心Registry <--> Consumer: 通知
+注册中心Registry <--> Provider: 通知
+
+Consumer -> Provider: 请求
+@enduml
