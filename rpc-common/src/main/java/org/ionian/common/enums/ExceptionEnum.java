@@ -6,7 +6,12 @@ package org.ionian.common.enums;
  * @since: 2022/5/9 12:15
  */
 public enum ExceptionEnum {
+    COMMONE_ERROR("9999","未知异常"),
+    //业务异常0-1xxxx=============================
     DEFAULT("1024","自定义异常"),
+
+    //基础系统异常2xxxxx=============================
+    SERVICE_NAME_EMPTY_ERROR("20001","服务名称为空"),
     ;
 
     /**

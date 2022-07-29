@@ -8,6 +8,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import org.ionian.api.HelloService;
+import org.ionian.register.BusLine;
 
 /**
  * 公用缓存 存储请求队列等公共信息
@@ -26,7 +27,9 @@ public class CommonClientCache {
      * @since 2022/5/19:11:07
      */
     public static Map<String,Class> SERVICE_MAP = new HashMap<>();
-    static {
-        SERVICE_MAP.put("HelloService",HelloService.class);
-    }
+
+    /**
+     * 注册中心同步的所有服务
+     */
+    public static Map<String, BusLine> ALL_BUS_LINE = new HashMap();
 }

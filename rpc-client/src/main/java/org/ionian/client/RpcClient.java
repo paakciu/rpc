@@ -2,8 +2,11 @@ package org.ionian.client;
 
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.*;
+import lombok.extern.slf4j.Slf4j;
 import org.ionian.api.HelloService;
+import org.ionian.common.util.IpUtil;
 import org.ionian.core.cache.CommonClientCache;
+import org.ionian.core.cache.CommonServerCache;
 import org.ionian.core.protocal.packet.RpcPacket;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -12,19 +15,29 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.ionian.common.IMConfig;
 import org.ionian.core.protocal.codec.B2MPacketCodecHandler;
 import org.ionian.core.proxy.impl.ProxyFactoryEnum;
+import org.ionian.register.BusLine;
+import org.ionian.register.Register;
+import org.ionian.register.ServiceData;
+import org.ionian.register.ZookeeperRegister;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
  * @author paakciu
- * @ClassName: TestClient
+ * @ClassName: RpcClient
  * 修改
  * @since: 2022/5/9 13:55
  */
-public class TestClient {
+@Slf4j
+public class RpcClient {
 
     public static void main(String[] args) throws Throwable {
-        TestClient client = new TestClient();
+        RpcClient client = new RpcClient();
         RpcServiceFactory rpcServiceFactory = client.startClientApplication();
+        //注册订阅
+        client.batchRegistry();
         //获取远程服务
         HelloService service = (HelloService)rpcServiceFactory.getService("HelloService");
         //调用并返回远程服务结果
@@ -32,7 +45,30 @@ public class TestClient {
         //正确执行并输出结果
         System.out.println("HelloService.result="+result);
     }
+    private void batchRegistry(){
+        Register register = new ZookeeperRegister();
+        registryConsumer(register,"HelloService",HelloService.class);
 
+        //定时拉取或者监听zk就可以实时更新这个列表
+        Map<String, BusLine> allBusLine = register.getAllBusLine();
+        CommonClientCache.ALL_BUS_LINE = allBusLine;
+    }
+    /**
+     * 声明消费者
+     */
+    private void registryConsumer(Register register, String serviceName, Class serviceInterfaceClass){
+        CommonClientCache.SERVICE_MAP.put(serviceName, serviceInterfaceClass);
+        ServiceData serviceData = new ServiceData();
+        serviceData.setServiceName(serviceName);
+        serviceData.setIp(IpUtil.getDefaultIpv4());
+        serviceData.setPort(String.valueOf(IMConfig.PORT));
+
+        BusLine busLine = new BusLine();
+        busLine.setServiceName(serviceName);
+        busLine.setConsumerNode(serviceData);
+        register.subscribe(busLine);
+        System.out.println(String.format("成功注册消费到服务%s,busLine=%s",serviceName, JSON.toJSONString(busLine)));
+    }
     public RpcServiceFactory startClientApplication() throws InterruptedException {
         //线程组
         NioEventLoopGroup workerGroup =new NioEventLoopGroup();

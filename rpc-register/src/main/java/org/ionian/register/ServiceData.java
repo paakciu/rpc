@@ -1,6 +1,9 @@
 package org.ionian.register;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +15,14 @@ import java.util.Map;
  * {"appName": "服务别名", "ip": "地址", "port": "端口","token": "(隐式)传输的token"}
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ServiceData {
-    /**
-     * 服务应用名称
-     */
-    private String appName;
+//    /**
+//     * 服务应用名称
+//     */
+//    private String appName;
 
     /**
      * 注册到节点到服务名称

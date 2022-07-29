@@ -36,7 +36,7 @@ public class ZookeeperHelper {
         this.zkAddress = zkAddress;
         this.baseSleepTimes=(baseSleepTimes == null)?1000:baseSleepTimes;
         this.maxRetryTimes=(maxRetryTimes == null)?3:maxRetryTimes;
-        RetryPolicy retryPolicy = new ExponentialBackoffRetry(baseSleepTimes, maxRetryTimes);
+        RetryPolicy retryPolicy = new ExponentialBackoffRetry(this.baseSleepTimes, this.maxRetryTimes);
         if (client == null) {
             client = CuratorFrameworkFactory.newClient(zkAddress, retryPolicy);
             client.start();

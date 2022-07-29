@@ -1,5 +1,8 @@
 package org.ionian.register;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @date: 2022/6/29 21:24
  * @author paakciu
@@ -10,7 +13,7 @@ public interface Register {
      * 注册接口
      * @date: 2022/6/29 21:25
      * @author paakciu
-     * @param serviceData
+     * @param busLine
      * @return
      */
     Boolean register(BusLine busLine);
@@ -19,7 +22,7 @@ public interface Register {
      * 下线
      * @date: 2022/6/29 21:25
      * @author paakciu
-     * @param serviceData
+     * @param busLine
      * @return
      */
     Boolean unRegister(BusLine busLine);
@@ -28,7 +31,7 @@ public interface Register {
      * 订阅
      * @date: 2022/6/29 21:25
      * @author paakciu
-     * @param serviceData
+     * @param busLine
      * @return
      */
     Boolean subscribe(BusLine busLine);
@@ -41,4 +44,6 @@ public interface Register {
      * @return
      */
     Boolean Unsubscribe(BusLine busLine);
+
+    Map<String,BusLine> getAllBusLine();
 }
