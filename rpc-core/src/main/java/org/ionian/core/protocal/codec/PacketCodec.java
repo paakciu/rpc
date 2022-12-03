@@ -2,8 +2,8 @@ package org.ionian.core.protocal.codec;
 
 import io.netty.buffer.ByteBuf;
 import org.ionian.common.IMConfig;
-import org.ionian.core.enums.PacketsCommandEnum;
-import org.ionian.core.enums.SerializerAlgorithm;
+import org.ionian.core.protocal.enums.PacketsCommandEnum;
+import org.ionian.core.protocal.enums.SerializerAlgorithm;
 import org.ionian.core.protocal.packet.BasePacket;
 import org.ionian.core.protocal.serializer.Serializer;
 

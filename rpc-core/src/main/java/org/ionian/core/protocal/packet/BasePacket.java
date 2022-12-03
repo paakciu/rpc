@@ -1,7 +1,7 @@
 package org.ionian.core.protocal.packet;
 
 import lombok.Data;
-import org.ionian.core.enums.SerializerAlgorithm;
+import org.ionian.core.protocal.enums.SerializerAlgorithm;
 import org.ionian.core.protocal.serializer.Serializer;
 
 /**

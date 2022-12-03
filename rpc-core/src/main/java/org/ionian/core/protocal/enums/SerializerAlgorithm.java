@@ -1,4 +1,4 @@
-package org.ionian.core.enums;
+package org.ionian.core.protocal.enums;
 
 import org.ionian.core.protocal.serializer.JSONSerializer;
 import org.ionian.core.protocal.serializer.Serializer;

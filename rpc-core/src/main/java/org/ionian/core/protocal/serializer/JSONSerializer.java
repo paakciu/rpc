@@ -1,7 +1,7 @@
 package org.ionian.core.protocal.serializer;
 
 import com.alibaba.fastjson.JSON;
-import org.ionian.core.enums.SerializerAlgorithm;
+import org.ionian.core.protocal.enums.SerializerAlgorithm;
 
 /**
  * JSONSerializer
