@@ -1,19 +1,16 @@
 package org.ionian.core.cache;
 
 import org.ionian.core.protocal.packet.RpcPacket;
+import org.ionian.register.BusLine;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import org.ionian.api.HelloService;
-import org.ionian.register.BusLine;
 
 /**
  * 公用缓存 存储请求队列等公共信息
- *
- * @Author linhao
  * @Date created in 8:44 下午 2021/12/1
  */
 public class CommonClientCache {
