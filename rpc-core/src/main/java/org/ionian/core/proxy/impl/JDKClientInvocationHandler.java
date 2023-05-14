@@ -14,7 +14,6 @@ import java.util.concurrent.TimeoutException;
 /**
  * 各种代理工厂统一使用这个InvocationHandler
  *
- * @Author linhao
  * @Date created in 6:59 下午 2021/12/5
  */
 @Slf4j

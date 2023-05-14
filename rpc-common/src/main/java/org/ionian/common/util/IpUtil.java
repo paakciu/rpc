@@ -14,9 +14,6 @@ import java.util.Optional;
 
 /**
  * 获取本机IP 地址
- *
- * @author dingwen
- * 2021.04.28 11:49
  */
 public class IpUtil {
     /*
